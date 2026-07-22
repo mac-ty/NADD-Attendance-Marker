@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "models.h"
+using namespace std;
 
-std::vector<Lecturer> loadLecturers();
-void appendLecturer(const Lecturer& lec);
+vector<Lecturer> loadLecturers();
+void appendLecturer(const Lecturer& lecturer);
