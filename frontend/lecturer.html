@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NADD - Lecturer</title>
+    <!-- CSS Import -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Google Fonts Imports -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="page-title">
+            <p class="title">NADD</p>
+            <p class="full-form">Na A Dey Der</p>
+        </div>
+
+        <div class="user-name">
+            <p>Lecturer</p>
+        </div>
+    </header>
+
+    <div class="auth-message hidden"></div>
+
+    <form action="" id="sign-up-form" class="hidden" novalidate>
+        <p class="title">Sign Up</p>
+        <div class="field-row">
+            <label for="lecturer-name">Full name</label>
+            <input type="text" name="lecturerName" id="lecturer-name" placeholder="e.g Prof. Quist-Aphetsi Kester">
+            <span class="error-msg name-error"></span>
+        </div>
+        <div class="field-row">
+            <label for="lecturer-email">Email</label>
+            <input type="email" name="lecturerEmail" id="lecturer-email" placeholder="example@gmail.com">
+            <span class="error-msg email-error"></span>
+        </div>
+        <div class="field-row">
+            <label for="rep-email">Course rep's email</label>
+            <input type="email" name="repEmail" id="rep-email" placeholder="example@gmail.com">
+            <span class="error-msg rep-email-error"></span>
+        </div>
+        <div class="field-row password-field">
+            <label for="lecturer-password">Password</label>
+            <div>
+                <input type="password" name="lecturerPassword" id="lecturer-password" placeholder="Enter a strong password">
+                <button type="button" class="show-password show">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">eye</title><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
+                </button>
+                <button type="button" class="hide-password">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">eye-off-fill</title><path fill="currentColor" d="M4.52 5.935L1.394 2.808l1.414-1.414l19.799 19.798l-1.414 1.415l-3.31-3.31A10.95 10.95 0 0 1 12 21c-5.392 0-9.878-3.88-10.818-9A11 11 0 0 1 4.52 5.935m10.238 10.237l-1.464-1.464a3 3 0 0 1-4.001-4.001L7.829 9.243a5 5 0 0 0 6.929 6.929M7.974 3.76C9.221 3.27 10.58 3 12 3c5.392 0 9.878 3.88 10.819 9a10.95 10.95 0 0 1-2.012 4.593l-3.86-3.86Q17 12.373 17 12a5 5 0 0 0-5.732-4.947z"/></svg>
+                </button>
+            </div>
+            <span class="error-msg password-error"></span>
+        </div>
+        <div class="field-row confirm-password-field">
+            <label for="lecturer-confirm-password">Confirm password</label>
+            <div>
+                <input type="password" name="confirmPassword" id="lecturer-confirm-password" placeholder="Repeat password">
+                <button type="button" class="show-password show">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">eye</title><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
+                </button>
+                <button type="button" class="hide-password">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">eye-off-fill</title><path fill="currentColor" d="M4.52 5.935L1.394 2.808l1.414-1.414l19.799 19.798l-1.414 1.415l-3.31-3.31A10.95 10.95 0 0 1 12 21c-5.392 0-9.878-3.88-10.818-9A11 11 0 0 1 4.52 5.935m10.238 10.237l-1.464-1.464a3 3 0 0 1-4.001-4.001L7.829 9.243a5 5 0 0 0 6.929 6.929M7.974 3.76C9.221 3.27 10.58 3 12 3c5.392 0 9.878 3.88 10.819 9a10.95 10.95 0 0 1-2.012 4.593l-3.86-3.86Q17 12.373 17 12a5 5 0 0 0-5.732-4.947z"/></svg>
+                </button>
+            </div>
+            <span class="error-msg confirm-password-error"></span>
+        </div>
+
+        <button type="submit" class="sign-up-bttn">Sign Up</button>
+        <button type="button" class="login-bttn">Already have an account? Log in</button>
+    </form>
+
+    <form action="" id="login-form" novalidate>
+        <p class="title">Login</p>
+        <div class="field-row">
+            <label for="login-email">Email</label>
+            <input type="email" name="loginEmail" id="login-email" placeholder="example@gmail.com">
+            <span class="error-msg email-error"></span>
+        </div>
+        <div class="field-row password-field">
+            <label for="login-password">Password</label>
+            <div>
+                <input type="password" name="loginPassword" id="login-password" placeholder="Enter your password">
+                <button type="button" class="show-password show">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">eye</title><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
+                </button>
+                <button type="button" class="hide-password">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">eye-off-fill</title><path fill="currentColor" d="M4.52 5.935L1.394 2.808l1.414-1.414l19.799 19.798l-1.414 1.415l-3.31-3.31A10.95 10.95 0 0 1 12 21c-5.392 0-9.878-3.88-10.818-9A11 11 0 0 1 4.52 5.935m10.238 10.237l-1.464-1.464a3 3 0 0 1-4.001-4.001L7.829 9.243a5 5 0 0 0 6.929 6.929M7.974 3.76C9.221 3.27 10.58 3 12 3c5.392 0 9.878 3.88 10.819 9a10.95 10.95 0 0 1-2.012 4.593l-3.86-3.86Q17 12.373 17 12a5 5 0 0 0-5.732-4.947z"/></svg>
+                </button>
+            </div>
+            <span class="error-msg password-error"></span>
+        </div>
+        <button type="submit" class="login-bttn">Login</button>
+        <button type="button" class="sign-up-bttn">Don't have an account? Sign Up</button>
+    </form>
+
+    <form action="" id="start-session-form" class="hidden" novalidate>
+        <p class="title">Start session</p>
+        <p class="session-type">Session Type</p>
+        <label for="face-to-face-session">
+            <input type="radio" name="sessionType" id="face-to-face-session" value="face_to_face"> Face-to-face
+        </label>
+        <label for="online-session">
+            <input type="radio" name="sessionType" id="online-session" value="online"> Online
+        </label>
+        <label for="email-lecturer">
+            <input type="checkbox" name="emailLecturer" id="email-lecturer" value="yes">
+            Email today's attendance to me (optional)
+        </label>
+        <button type="submit" id="start-session-bttn">Start Session</button>
+    </form>
+
+    <section class="live-session hidden">
+        <div class="session-card">
+            <p class="session-label">Time remaining</p>
+            <p class="session-value countdown" id="time-remaining">--:--</p>
+        </div>
+        <div class="session-card">
+            <p class="session-label">Session code</p>
+            <p class="session-value" id="session-code">--------</p>
+        </div>
+        <div class="session-card qr-code">
+
+        </div>
+        <div class="session-card">
+            <p class="session-label">Session Type</p>
+            <p class="session-value" id="session-type">Face to Face</p>
+        </div>
+        <div class="session-card">
+            <p class="session-label">Marked so far</p>
+            <p class="session-value" id="marked-count">0</p>
+        </div>
+        <form action="" id="manual-mark-form" novalidate>
+            <p class="title">Manually mark a student</p>
+            <p class="mark-result"></p>
+            <div class="field">
+                <input type="text" name="studentName" id="student-name" placeholder="Enter student's full name">
+                <span class="error-msg name-error"></span>
+            </div>
+            <div class="field">
+                <input type="text" name="studentID" id="student-id" placeholder="Enter student's ID">
+                <span class="error-msg id-error"></span>
+            </div>
+            <button type="submit">Mark</button>
+        </form>
+    </section>
+
+    <section class="closed-session hidden">
+        <p class="title">Session ended</p>
+        <p class="marked-count">Final count: <span>0</span> students marked</p>
+        <p class="mailed-to">Report sent to <span id="mailed-emails"></span></p>
+        <button class="start-session-bttn">Start another session</button>
+    </section>
+
+    <script src="./lecturer.js" defer></script>
+</body>
+</html>

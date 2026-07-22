@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NADD - Student</title>
+    <!-- CSS Import -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Google Fonts Imports -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="page-title">
+            <p class="title">NADD</p>
+            <p class="full-form">Na A Dey Der</p>
+        </div>
+
+        <div class="user-name">
+            <p>Student</p>
+        </div>
+    </header>
+
+    <p id="session-subtitle">Loading session...</p>
+
+    <div id="mark-message" class="hidden"></div>
+
+    <form action="" id="mark-attendance-form" novalidate>
+        <p class="title">Mark your attendance</p>
+        <div class="field-row">
+            <label for="student-name">Full name</label>
+            <input type="text" name="studentName" id="student-name" placeholder="e.g. Theodore Macaulay">
+            <span class="error-msg name-error"></span>
+        </div>
+        <div class="field-row">
+            <label for="student-id">Student ID number</label>
+            <input type="text" name="studentID" id="student-id" placeholder="252640XXXX">
+            <span class="error-msg id-error"></span>
+        </div>
+        <p class="location-text" id="location-text">Your location will be checked when you click submit</p>
+        <button type="submit" id="mark-bttn">Mark my attendance</button>
+    </form>
+    <script src="./scan.js"></script>
+</body>
+</html>

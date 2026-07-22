@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NADD - Status</title>
+    <!-- CSS Import -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Google Fonts Imports -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="page-title">
+            <p class="title">NADD</p>
+            <p class="full-form">Na A Dey Der</p>
+        </div>
+
+        <div class="user-name">
+            <p>Status</p>
+        </div>
+    </header>
+
+    <main class="status-page">
+        <p id="status-subtitle">Live attendance</p>
+        <div class="stats-card">
+            <p class="stat-label">Time left</p>
+            <p class="stat-value countdown" id="time-remaining">--:--</p>
+        </div>
+        <div class="stats-card">
+            <p class="stat-label">Marked</p>
+            <p class="stat-value" id="marked-count">0</p>
+        </div>
+        <p class="badge-info" id="type-badge">Loading...</p>
+    </main>
+
+    <script src="./status.js" defer></script>
+</body>
+</html>
