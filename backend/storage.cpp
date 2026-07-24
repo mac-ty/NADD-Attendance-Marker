@@ -4,7 +4,7 @@
 using namespace std;
 
 
-static const string lecturerFile = "../database/lecturers.csv";
+static const string lecturerFile = "./database/lecturers.csv";
 
 
 vector<Lecturer> loadLecturers() {

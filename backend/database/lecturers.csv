@@ -1,0 +1,4 @@
+id, name, email, passwordHash, repEmail
+1,Theodore Macaulay Esene,esenetheodoremacaulay3@gmail.com,0e76e1b208679411f95730afcd977b7caba6f5351534b8310b058cc183405bdc,ryanmacaulay3@gmail.com
+2,Ryan Macaulay,ry@gmail.com,660b06eacc24d38feb0193392533b3c3a50b9b62ab827761dca9b9c63dc89ed3,q@gmail.com
+3,John Mensah,seandzreke@gmail.com,35a82400ba30b06243aa615217acb4806330000b1ed617d662b32e53d74c8b3f,princearthur@gmail.com

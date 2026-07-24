@@ -80,7 +80,6 @@ void handleLogin(const httplib::Request& req, httplib::Response& res) {
             if (lecturer.passwordHash == hashedInput) {
                 string token = generateToken();
                 loginTokens[token] = email;
-
                 res.set_content(
                 json({
                     {"status", "success"},
@@ -106,7 +105,7 @@ void handleLogin(const httplib::Request& req, httplib::Response& res) {
     res.set_content(
         json({
             {"status", "error"},
-            {"reason", "there is no account with that email"}
+            {"reason", "Account not found"}
         }).dump(),
         "application/json"
     );

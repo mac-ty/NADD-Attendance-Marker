@@ -1,4 +1,7 @@
 
+const API_BASE = "http://localhost:8080/api";
+let token = null;
+
 const signUpForm = document.getElementById("sign-up-form");
 const loginForm = document.getElementById("login-form");
 const signUpBttns = document.querySelectorAll(".sign-up-bttn");
@@ -61,7 +64,7 @@ loginForm.querySelector(".hide-password").addEventListener("click", () => {
 
 
 
-signUpForm.addEventListener("submit", (e) => {
+signUpForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     let allValid = true;
 
@@ -137,13 +140,38 @@ signUpForm.addEventListener("submit", (e) => {
             error.textContent = "";
         });
 
-        signUpForm.classList.add("hidden");
-        loginForm.classList.remove("hidden");
+        const authMsg = document.querySelector(".auth-message");
 
+        try {
+            const res = await fetch(
+                `${API_BASE}/lecturer/signup`,
+                {
+                    method : "POST",
+                    headers : {"Content-Type" : "application/json"},
+                    body : JSON.stringify({name, email, password, repEmail})
+                });
+            const data = await res.json();
+
+            if (data.status === "success") {
+                signUpForm.classList.add("hidden");
+                loginForm.classList.remove("hidden");
+                authMsg.textContent = "";
+                authMsg.classList.add("hidden");
+            }
+            else {
+                authMsg.classList.remove("hidden");
+                authMsg.textContent = data.reason;
+            }
+
+        }
+        catch (error) {
+            authMsg.classList.remove("hidden");
+            authMsg.textContent = "Couldn't reach the server.";
+        }
     }
 });
 
-loginForm.addEventListener("submit", (e) => {
+loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     let allValid = true;
 
@@ -168,8 +196,36 @@ loginForm.addEventListener("submit", (e) => {
         errorMsgs.forEach(error => {
             error.textContent = "";
         });
-        loginForm.classList.add("hidden");
-        document.getElementById("start-session-form").classList.remove("hidden");
+        const authMsg = document.querySelector(".auth-message");
+
+        try {
+            const res = await fetch(
+                `${API_BASE}/lecturer/login`,
+                {
+                    method : "POST",
+                    headers : {"Content-Type" : "application/json"},
+                    body : JSON.stringify({email : loginEmail, password : loginPassword})
+                });
+            const data = await res.json();
+
+            if (data.status === "success") {
+                token = data.token;
+                loginForm.classList.add("hidden");
+                document.getElementById("start-session-form").classList.remove("hidden");
+                authMsg.textContent = "";
+                authMsg.classList.add("hidden");
+            }
+            else {
+                const authMsg = document.querySelector(".auth-message");
+                authMsg.classList.remove("hidden");
+                authMsg.textContent = data.reason;
+            }
+        }
+        catch (error) {
+            const authMsg = document.querySelector(".auth-message");
+            authMsg.classList.remove("hidden");
+            authMsg.textContent = "Couldn't reach server";
+        }
     }
 });
 
