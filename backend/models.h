@@ -11,6 +11,7 @@ struct Lecturer {
     string email;
     string passwordHash;
     string repEmail;
+    string courseCode;
 };
 
 struct AttendanceRecord {

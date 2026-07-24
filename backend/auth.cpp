@@ -35,6 +35,7 @@ void handleSignup(const httplib::Request& req, httplib::Response& res) {
     string email = body["email"];
     string password = body["password"];
     string repEmail = body["repEmail"];
+    string courseCode = body["courseCode"];
 
     vector<Lecturer> lecturers = loadLecturers();
     for (const Lecturer& lecturer : lecturers) {
@@ -57,6 +58,7 @@ void handleSignup(const httplib::Request& req, httplib::Response& res) {
     newLecturer.email = email;
     newLecturer.passwordHash = hashPassword(password);
     newLecturer.repEmail = repEmail;
+    newLecturer.courseCode = courseCode;
 
     appendLecturer(newLecturer);
     res.set_content(
@@ -120,4 +122,19 @@ bool isTokenValid(const string& token, string& outEmail) {
 
     outEmail = it -> second;
     return true;
+}
+
+
+void handleDebugLecturers(const httplib::Request& req, httplib::Response& res) {
+    vector<Lecturer> lecturers = loadLecturers();
+    json arr = json::array();
+    for (const Lecturer& lec : lecturers) {
+        arr.push_back({
+            {"id", lec.id},
+            {"name", lec.name},
+            {"email", lec.email},
+            {"repEmail", lec.repEmail}
+        });
+    }
+    res.set_content(arr.dump(), "application/json");
 }

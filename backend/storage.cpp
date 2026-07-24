@@ -18,16 +18,17 @@ vector<Lecturer> loadLecturers() {
     string lecturerRecord;
     while (getline(file, lecturerRecord)) {
         if (lecturerRecord.empty()) continue;
-        if (lecturerRecord == "id, name, email, passwordHash, repEmail") continue;
+        if (lecturerRecord == "id, name, email, repEmail, courseCode, passwordHash") continue;
 
         stringstream ss(lecturerRecord);
-        string id, name, email, passwordHash, repEmail;
+        string id, name, email, passwordHash, repEmail, courseCode;
 
         getline(ss, id, ',');
         getline(ss, name, ',');
         getline(ss, email, ',');
-        getline(ss, passwordHash, ',');
         getline(ss, repEmail, ',');
+        getline(ss, courseCode, ',');
+        getline(ss, passwordHash, ',');
 
         Lecturer lecturer;
         lecturer.id = stoi(id);
@@ -35,6 +36,7 @@ vector<Lecturer> loadLecturers() {
         lecturer.email = email;
         lecturer.passwordHash = passwordHash;
         lecturer.repEmail = repEmail;
+        lecturer.courseCode = courseCode;
 
         lecturers.push_back(lecturer);
     }
@@ -46,6 +48,6 @@ vector<Lecturer> loadLecturers() {
 
 void appendLecturer(const Lecturer& lecturer) {
     ofstream file(lecturerFile, ios::app);
-    file << lecturer.id << "," << lecturer.name << "," << lecturer.email << "," << lecturer.passwordHash << "," << lecturer.repEmail << "\n";
+    file << lecturer.id << "," << lecturer.name << "," << lecturer.email << "," <<  lecturer.repEmail << "," <<lecturer.courseCode << "," << lecturer.passwordHash << "\n";
     file.close();
 }

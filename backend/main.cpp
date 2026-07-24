@@ -20,6 +20,7 @@ int main() {
     
     svr.Post("/api/lecturer/signup", handleSignup);
     svr.Post("/api/lecturer/login", handleLogin);
+    // svr.Get("/api/debug/lecturers", handleDebugLecturers);
 
     const char* portEnv = getenv("PORT");
     int port = portEnv ? atoi(portEnv) : 8080;

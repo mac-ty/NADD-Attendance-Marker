@@ -1,4 +1,2 @@
-id, name, email, passwordHash, repEmail
-1,Theodore Macaulay Esene,esenetheodoremacaulay3@gmail.com,0e76e1b208679411f95730afcd977b7caba6f5351534b8310b058cc183405bdc,ryanmacaulay3@gmail.com
-2,Ryan Macaulay,ry@gmail.com,660b06eacc24d38feb0193392533b3c3a50b9b62ab827761dca9b9c63dc89ed3,q@gmail.com
-3,John Mensah,seandzreke@gmail.com,35a82400ba30b06243aa615217acb4806330000b1ed617d662b32e53d74c8b3f,princearthur@gmail.com
+id, name, email, repEmail, courseCode, passwordHash
+1,Theodore Macaulay Esene,ryanmacaulay3@gmail.com,ryanmacaulay3@gmail.com,MATH 102,5c57703d13aa820b087002ea5e93732a8da4a1707d4b66d306a86918f3317ef4

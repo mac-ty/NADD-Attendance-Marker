@@ -98,11 +98,14 @@ form {
     width: 40vw;
 }
 
-form .title,
-form .field-row:nth-child(2),
-form .field-row:nth-child(3),
-form .field-row:nth-child(4),
-form button {
+#login-form > * {
+    grid-column: span 2;
+}
+
+#sig-up-form .title,
+#sign-up-form .field-row:nth-child(2),
+#sign-up-form .field-row:nth-child(5),
+#sign-up-form button {
     grid-column: 1/-1;
 }
 

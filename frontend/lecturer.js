@@ -74,6 +74,7 @@ signUpForm.addEventListener("submit", async (e) => {
     const name = signUpForm.querySelector("#lecturer-name").value.trim();
     const email = signUpForm.querySelector("#lecturer-email").value.trim();
     const repEmail = signUpForm.querySelector("#rep-email").value.trim();
+    const courseCode = signUpForm.querySelector("#course-code").value.trim();
     const password = signUpForm.querySelector("#lecturer-password").value;
     const confirmPassword = signUpForm.querySelector("#lecturer-confirm-password").value;
 
@@ -82,6 +83,7 @@ signUpForm.addEventListener("submit", async (e) => {
     const nameError = signUpForm.querySelector(".name-error");
     const emailError = signUpForm.querySelector(".email-error");
     const repEmailError = signUpForm.querySelector(".rep-email-error");
+    const courseCodeError = signUpForm.querySelector(".course-code-error");
     const passwordError = signUpForm.querySelector(".password-error");
     const confirmPasswordError = signUpForm.querySelector(".confirm-password-error");
 
@@ -136,6 +138,11 @@ signUpForm.addEventListener("submit", async (e) => {
         allValid = false;
     }
 
+    if (!courseCode) {
+        courseCodeError.textContent = "Course code field cannot be empty";
+        allValid = false;
+    }
+
 
     if (allValid) {
         errorMsgs.forEach(error => {
@@ -150,7 +157,7 @@ signUpForm.addEventListener("submit", async (e) => {
                 {
                     method : "POST",
                     headers : {"Content-Type" : "application/json"},
-                    body : JSON.stringify({name, email, password, repEmail})
+                    body : JSON.stringify({name, email, password, repEmail, courseCode})
                 });
             const data = await res.json();
 
