@@ -1,5 +1,7 @@
 
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    ? "http://localhost:8080/api"
+    : "https://nadd-attendance-marker.onrender.com/api";
 let token = null;
 
 const signUpForm = document.getElementById("sign-up-form");
