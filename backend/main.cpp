@@ -1,6 +1,7 @@
 #include "httplib.h"
 #include "auth.h"
 #include "session_manager.h"
+#include "attendance.h"
 #include <iostream>
 #include <cstdlib>
 using namespace std;
@@ -24,6 +25,8 @@ int main() {
     svr.Post("/api/session/start", handleStartSession);
     svr.Get(R"(/api/session/(\w+)/status)", handleSessionStatus);
     svr.Post(R"(/api/session/(\w+)/close)", handleCloseSession);
+    svr.Post("/api/attendance/mark", handleMarkAttendance);
+    svr.Post("/api/attendance/manual", handleManualMark);
     // svr.Get("/api/debug/lecturers", handleDebugLecturers);
 
     const char* portEnv = getenv("PORT");

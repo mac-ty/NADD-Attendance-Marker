@@ -1,2 +1,3 @@
 id, name, email, repEmail, courseCode, passwordHash
 1,John Mensah,r@gmail.com,r@gmail.com,MATH101,c4d6ba07c0d072eacfc3438c738b066b0ccd9807527aaa5cacb7f75dbdf66691
+2,Ryan,rya@gmail.com,ryanmacaulay3@gmail.com,MATH101,c4d6ba07c0d072eacfc3438c738b066b0ccd9807527aaa5cacb7f75dbdf66691

@@ -1,8 +1,17 @@
+const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    ? "http://localhost:8080/api"
+    : "https://nadd-attendance-marker.onrender.com/api";
+
 const urlParams = new URLSearchParams(window.location.search);
 const sessionCode = urlParams.get("session");
 const sessionSubtitle = document.getElementById("session-subtitle");
 const attendanceForm = document.getElementById("mark-attendance-form");
 const markMessage = document.getElementById("mark-message");
+
+let sessionType = null;
+const locationText = document.getElementById("location-text");
+
+
 
 function checkSession() {
     if (!sessionCode) {
@@ -22,6 +31,48 @@ if (!deviceID) {
     deviceID = crypto.randomUUID();
     localStorage.setItem("device_ID", deviceID);
 }
+
+
+function updateLocationText() {
+    if (sessionType === "online") {
+        locationText.classList.add("hidden");
+    }
+    else {
+        locationText.classList.remove("hidden");
+    }
+};
+
+
+async function loadSessionType() {
+    if (!sessionCode) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/session/${sessionCode}/status`);
+        const data = await res.json();
+
+        if (res.ok) {
+            sessionType = data.sessionType;
+            updateLocationText();
+
+            if (data.closed) {
+                sessionSubtitle.textContent = `Session ${sessionCode} has ended`;
+                attendanceForm.classList.add("hidden");
+            }
+        }
+        else {
+            sessionSubtitle.textContent = "This session could not be found";
+            attendanceForm.classList.add("hidden");
+        }
+    }
+    catch (error) {
+        sessionSubtitle.textContent = "Couldn't reach the server";
+        attendanceForm.classList.add("hidden");
+    }
+}
+
+
+loadSessionType();
+
 
 attendanceForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -51,29 +102,56 @@ attendanceForm.addEventListener("submit", (e) => {
         markBttn.disabled = true;
         markBttn.textContent = "Marking...";
 
-        markMessage.classList.remove("hidden");
-        markMessage.textContent = `Attendance marked, ${name}.`;
-        markMessage.classList.add("success");
-        attendanceForm.classList.add("hidden");
+
+        const requestBody = {sessionCode, name, studentID: id, deviceID};
+
+        if (sessionType === "face_to_face") {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                requestBody.lat = position.coords.latitude;
+                requestBody.lng = position.coords.longitude;
+                await submitAttendance(requestBody, markBttn);
+            },
+            () => {
+                markBttn.disabled = false;
+                markBttn.textContent = "Mark attendance";
+                markMessage.classList.remove("hidden");
+                markMessage.textContent = "Unable to get your location. Enable location and try again";
+            });
+        }
+        else {
+            submitAttendance(requestBody, markBttn);
+        }
     }
 });
 
-const locationText = document.getElementById("location-text");
-const sessionType = "face_to_face";
 
-function updateLocationText() {
-    if (sessionType === "online") {
-        locationText.classList.add("hidden");
+async function submitAttendance(requestBody, markBttn) {
+    try {
+        const res = await fetch(`${API_BASE}/attendance/mark`, {
+            method : "POST",
+            headers : {"Content-Type": "application/json"},
+            body : JSON.stringify(requestBody)
+        });
+
+        const data = await res.json();
+
+        if (data.status === "success") {
+            markMessage.classList.remove("hidden");
+            markMessage.textContent = `${requestBody.name}, your attendance has been marked successfully.`;
+            markMessage.classList.add("success");
+            attendanceForm.classList.add("hidden");
+        }
+        else {
+            markBttn.disabled = false;
+            markBttn.textContent = "Mark attendance";
+            markMessage.classList.remove("hidden");
+            markMessage.textContent = data.reason;
+        }
     }
-    else {
-        locationText.classList.remove("hidden");
+    catch (error) {
+        markBttn.disabled = false;
+        markBttn.textContent = "Mark attendance";
+        markMessage.classList.remove("hidden");
+        markMessage.textContent = "Couldn't reach the server.";
     }
-};
-
-updateLocationText();
-
-
-
-
-// update the text in the mark-message div when 
-// the user marks attendance and then disable the form
+}

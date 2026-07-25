@@ -451,6 +451,10 @@ main.status-page .badge-info {
         width: 85%; 
     }
 
+    #start-session-form > * {
+        grid-column: span 2 !important;
+    }
+
     .live-session {
         grid-template-columns: 1fr 1fr;
     }
