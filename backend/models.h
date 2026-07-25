@@ -26,6 +26,7 @@ struct Session {
     string sessionCode;
     int lecturerID;
     string courseCode;
+    string csvFilename;
     string sessionType;
     double centerLat = 0, centerLng = 0;
     time_t startTime;
