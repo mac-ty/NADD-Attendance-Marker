@@ -4,4 +4,7 @@
 using namespace std;
 
 vector<Lecturer> loadLecturers();
-void appendLecturer(const Lecturer& lecturer);
+void appendLecturer(const Lecturer &lecturer);
+
+void createSessionFile(const Session &session);
+void appendAttendanceRecord(const Session &session, const AttendanceRecord &record);

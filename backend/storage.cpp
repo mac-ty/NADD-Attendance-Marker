@@ -3,22 +3,27 @@
 #include <sstream>
 using namespace std;
 
-
 static const string lecturerFile = "./database/lecturers.csv";
 
+static const string sessionsDirectory = "./database/sessions/";
 
-vector<Lecturer> loadLecturers() {
+vector<Lecturer> loadLecturers()
+{
     vector<Lecturer> lecturers;
     ifstream file(lecturerFile);
 
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         return lecturers;
     }
 
     string lecturerRecord;
-    while (getline(file, lecturerRecord)) {
-        if (lecturerRecord.empty()) continue;
-        if (lecturerRecord == "id, name, email, repEmail, courseCode, passwordHash") continue;
+    while (getline(file, lecturerRecord))
+    {
+        if (lecturerRecord.empty())
+            continue;
+        if (lecturerRecord == "id, name, email, repEmail, courseCode, passwordHash")
+            continue;
 
         stringstream ss(lecturerRecord);
         string id, name, email, passwordHash, repEmail, courseCode;
@@ -45,9 +50,23 @@ vector<Lecturer> loadLecturers() {
     return lecturers;
 }
 
-
-void appendLecturer(const Lecturer& lecturer) {
+void appendLecturer(const Lecturer &lecturer)
+{
     ofstream file(lecturerFile, ios::app);
-    file << lecturer.id << "," << lecturer.name << "," << lecturer.email << "," <<  lecturer.repEmail << "," <<lecturer.courseCode << "," << lecturer.passwordHash << "\n";
+    file << lecturer.id << "," << lecturer.name << "," << lecturer.email << "," << lecturer.repEmail << "," << lecturer.courseCode << "," << lecturer.passwordHash << "\n";
+    file.close();
+}
+
+void createSessionFile(const Session &session)
+{
+    ofstream file(sessionsDirectory + session.csvFilename);
+    file << "name,studentID,deviceID,timeMarked,manual\n";
+    file.close();
+}
+
+void appendAttendanceRecord(const Session &session, const AttendanceRecord &record)
+{
+    ofstream file(sessionsDirectory + session.csvFilename, ios::app);
+    file << record.name << "," << record.studentID << "," << record.deviceID << "," << record.timeMarked << "," << (record.manual ? "true" : "false") << "\n";
     file.close();
 }
