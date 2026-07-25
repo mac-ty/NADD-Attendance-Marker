@@ -1,5 +1,6 @@
 #include "httplib.h"
 #include "auth.h"
+#include "session_manager.h"
 #include <iostream>
 #include <cstdlib>
 using namespace std;
@@ -20,13 +21,16 @@ int main() {
     
     svr.Post("/api/lecturer/signup", handleSignup);
     svr.Post("/api/lecturer/login", handleLogin);
+    svr.Post("/api/session/start", handleStartSession);
+    svr.Get(R"(/api/session/(\w+)/status)", handleSessionStatus);
+    svr.Post(R"(/api/session/(\w+)/close)", handleCloseSession);
     // svr.Get("/api/debug/lecturers", handleDebugLecturers);
 
     const char* portEnv = getenv("PORT");
     int port = portEnv ? atoi(portEnv) : 8080;
 
-    cout << "Server running at http://localhost:8080" << endl;
-    svr.listen("0.0.0.0", 8080);
+    cout << "Server running on port " << port << endl;
+    svr.listen("0.0.0.0", port);
 
     return 0;
 }

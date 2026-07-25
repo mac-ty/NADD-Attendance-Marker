@@ -182,6 +182,7 @@ form .error-msg {
 }
 
 form button[type="submit"] {
+    grid-column: span 2;
     background-color: var(--orange);
     border: none;
     padding: 10px;
@@ -360,6 +361,10 @@ form button[type="submit"]:active {
 /* scan page CSS */
 #mark-attendance-form {
     width: clamp(340px, 40vw, 1200px);
+}
+
+#mark-attendance-form > * {
+    grid-column: span 2;
 }
 
 #mark-attendance-form .location-text {

@@ -30,43 +30,55 @@ static string generateToken() {
 }
 
 void handleSignup(const httplib::Request& req, httplib::Response& res) {
-    json body = json::parse(req.body);
-    string name = body["name"];
-    string email = body["email"];
-    string password = body["password"];
-    string repEmail = body["repEmail"];
-    string courseCode = body["courseCode"];
+    try {
+        json body = json::parse(req.body);
+        string name = body["name"];
+        string email = body["email"];
+        string password = body["password"];
+        string repEmail = body["repEmail"];
+        string courseCode = body["courseCode"];
 
-    vector<Lecturer> lecturers = loadLecturers();
-    for (const Lecturer& lecturer : lecturers) {
-        if (lecturer.email == email) {
-            res.status = 400;
-            res.set_content(
-                json({
-                    {"status", "error"},
-                    {"reason", "email already registered"}
-                }).dump(),
-                "application/json"
-            );
-            return;
+        vector<Lecturer> lecturers = loadLecturers();
+        for (const Lecturer& lecturer : lecturers) {
+            if (lecturer.email == email) {
+                res.status = 400;
+                res.set_content(
+                    json({
+                        {"status", "error"},
+                        {"reason", "email already registered"}
+                    }).dump(),
+                    "application/json"
+                );
+                return;
+            }
         }
+
+        Lecturer newLecturer;
+        newLecturer.id = lecturers.empty() ? 1 : lecturers.back().id + 1;
+        newLecturer.name = name;
+        newLecturer.email = email;
+        newLecturer.passwordHash = hashPassword(password);
+        newLecturer.repEmail = repEmail;    
+        newLecturer.courseCode = courseCode;
+
+        appendLecturer(newLecturer);
+        res.set_content(
+            json({
+                {"status", "success"}
+            }).dump(),
+            "application/json"
+        );
     }
-
-    Lecturer newLecturer;
-    newLecturer.id = lecturers.empty() ? 1 : lecturers.back().id + 1;
-    newLecturer.name = name;
-    newLecturer.email = email;
-    newLecturer.passwordHash = hashPassword(password);
-    newLecturer.repEmail = repEmail;
-    newLecturer.courseCode = courseCode;
-
-    appendLecturer(newLecturer);
-    res.set_content(
-        json({
-            {"status", "success"}
-        }).dump(),
-        "application/json"
-    );
+    catch (const exception& e) {
+        res.status = 500;
+        res.set_content(
+            json({
+                {"status", "error"},
+                {"reason", string("Server exception: ") + e.what()}
+            }).dump(),
+            "application/json"
+        );
+    }
 }
 
 void handleLogin(const httplib::Request& req, httplib::Response& res) {

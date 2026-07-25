@@ -25,6 +25,7 @@ struct AttendanceRecord {
 struct Session {
     string sessionCode;
     int lecturerID;
+    string courseCode;
     string sessionType;
     double centerLat = 0, centerLng = 0;
     time_t startTime;

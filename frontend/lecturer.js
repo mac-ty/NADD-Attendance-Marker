@@ -82,8 +82,8 @@ signUpForm.addEventListener("submit", async (e) => {
     const errorMsgs = signUpForm.querySelectorAll(".error-msg");
     const nameError = signUpForm.querySelector(".name-error");
     const emailError = signUpForm.querySelector(".email-error");
-    const repEmailError = signUpForm.querySelector(".rep-email-error");
     const courseCodeError = signUpForm.querySelector(".course-code-error");
+    const repEmailError = signUpForm.querySelector(".rep-email-error");
     const passwordError = signUpForm.querySelector(".password-error");
     const confirmPasswordError = signUpForm.querySelector(".confirm-password-error");
 
@@ -157,7 +157,7 @@ signUpForm.addEventListener("submit", async (e) => {
                 {
                     method : "POST",
                     headers : {"Content-Type" : "application/json"},
-                    body : JSON.stringify({name, email, password, repEmail, courseCode})
+                    body : JSON.stringify({name, email, repEmail,courseCode, password})
                 });
             const data = await res.json();
 
@@ -242,7 +242,7 @@ loginForm.addEventListener("submit", async (e) => {
 
 const startSessionForm = document.getElementById("start-session-form");
 
-startSessionForm.addEventListener("submit", (e) => {
+startSessionForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const faceToFaceRadio = startSessionForm.querySelector("#face-to-face-session");
@@ -258,9 +258,52 @@ startSessionForm.addEventListener("submit", (e) => {
     if (allValid) {
         authMsg.classList.add("hidden");
         authMsg.textContent = "";
-        startSessionForm.classList.add("hidden");
-        document.querySelector(".live-session").classList.remove("hidden");
-    }
+
+        let sessionType = (faceToFaceRadio.checked) ? "face_to_face" : "online";
+        const requestBody = {token, sessionType};
+
+        if (sessionType === "face_to_face") {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                requestBody.lat = position.coords.latitude;
+                requestBody.lng = position.coords.longitude;  
+                
+                try {
+                    const res = await fetch(`${API_BASE}/session/start`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type" : "application/json"
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    const data = await res.json();
+
+                    if (data.status !== "success") {
+                        document.querySelector(".auth-message").classList.remove("hidden");
+                        document.querySelector(".auth-message").textContent = data.reason;
+                        return;
+                    }
+
+                    startSessionForm.classList.add("hidden");
+                    document.querySelector(".live-session").classList.remove("hidden");
+
+                    document.querySelector(".qr-code").innerHTML = data.qrSvg;
+                    document.getElementById("session-code").textContent = data.sessionCode;
+                }
+                catch (error) {
+                    document.querySelector(".auth-message").classList.remove("hidden");
+                    document.querySelector(".auth-message").textContent = "Couldn't reach the server.";
+                }
+            }, 
+            () => {
+                    authMsg.classList.remove("hidden");
+                    authMsg.textContent = "Unable to get your location. \nEnable location and try again";
+                    return;
+            });
+        }
+
+        
+    }   
 
 })
 
