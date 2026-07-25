@@ -322,6 +322,7 @@ startSessionForm.addEventListener("submit", async (e) => {
                     document.querySelector(".qr-code").innerHTML = data.qrSvg;
                     document.getElementById("session-code").textContent = data.sessionCode;
                     currentSessionCode = data.sessionCode;
+                    return;
                 }
                 catch (error) {
                     document.querySelector(".auth-message").classList.remove("hidden");
@@ -337,7 +338,38 @@ startSessionForm.addEventListener("submit", async (e) => {
             });
         }
 
-        
+        try {
+            const res = await fetch(`${API_BASE}/session/start`, {
+                method: "POST",
+                headers: {
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const data = await res.json();
+
+            if (data.status !== "success") {
+                document.querySelector(".auth-message").classList.remove("hidden");
+                document.querySelector(".auth-message").textContent = data.reason;
+                startSessionBttn.disabled = false;
+                startSessionBttn.textContent = "Start session";
+                return;
+            }
+
+            startSessionForm.classList.add("hidden");
+            document.querySelector(".live-session").classList.remove("hidden");
+
+            document.querySelector(".qr-code").innerHTML = data.qrSvg;
+            document.getElementById("session-code").textContent = data.sessionCode;
+            currentSessionCode = data.sessionCode;
+        }
+        catch (error) {
+            document.querySelector(".auth-message").classList.remove("hidden");
+            document.querySelector(".auth-message").textContent = "Couldn't reach the server.";
+            startSessionBttn.disabled = false;
+            startSessionBttn.textContent = "Start session";
+        }
     }   
 
 })
