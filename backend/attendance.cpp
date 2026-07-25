@@ -74,7 +74,7 @@ void handleMarkAttendance(const httplib::Request& req, httplib::Response& res) {
         double lat = body["lat"];
         double lng = body["lng"];
         double distance = calculateDistance(session -> centerLat, session -> centerLng, lat, lng);
-        const double allowedRadius = 500.0;
+        const double allowedRadius = 800.0;
 
         if (distance > allowedRadius) {
             res.status = 400;

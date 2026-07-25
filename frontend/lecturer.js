@@ -3,6 +3,7 @@ const API_BASE = (window.location.hostname === "localhost" || window.location.ho
     ? "http://localhost:8080/api"
     : "https://nadd-attendance-marker.onrender.com/api";
 let token = null;
+let currentSessionCode = null;  
 
 const signUpForm = document.getElementById("sign-up-form");
 const loginForm = document.getElementById("login-form");
@@ -149,6 +150,11 @@ signUpForm.addEventListener("submit", async (e) => {
             error.textContent = "";
         });
 
+        signUpBttns.forEach(bttn => {
+            bttn.disabled = true;
+            bttn.textContent = "Signing up...";
+        });
+
         const authMsg = document.querySelector(".auth-message");
 
         try {
@@ -170,12 +176,20 @@ signUpForm.addEventListener("submit", async (e) => {
             else {
                 authMsg.classList.remove("hidden");
                 authMsg.textContent = data.reason;
+                signUpBttns.forEach(bttn => {
+                    bttn.disabled = false;
+                    bttn.textContent = "Sign up";
+                });
             }
 
         }
         catch (error) {
             authMsg.classList.remove("hidden");
             authMsg.textContent = "Couldn't reach the server.";
+            signUpBttns.forEach(bttn => {
+                bttn.disabled = false;
+            bttn.textContent = "Sign up";
+            });
         }
     }
 });
@@ -205,6 +219,12 @@ loginForm.addEventListener("submit", async (e) => {
         errorMsgs.forEach(error => {
             error.textContent = "";
         });
+
+        loginBttns.forEach(bttn => {
+            bttn.disabled = true;
+            bttn.textContent = "Logging in...";
+        });
+
         const authMsg = document.querySelector(".auth-message");
 
         try {
@@ -228,12 +248,20 @@ loginForm.addEventListener("submit", async (e) => {
                 const authMsg = document.querySelector(".auth-message");
                 authMsg.classList.remove("hidden");
                 authMsg.textContent = data.reason;
+                loginBttns.forEach(bttn => {
+                    bttn.disabled = false;
+                    bttn.textContent = "Login";
+                });
             }
         }
         catch (error) {
             const authMsg = document.querySelector(".auth-message");
             authMsg.classList.remove("hidden");
             authMsg.textContent = "Couldn't reach server";
+            loginBttns.forEach(bttn => {
+                bttn.disabled = false;
+                bttn.textContent = "Login";
+            });
         }
     }
 });
@@ -241,7 +269,7 @@ loginForm.addEventListener("submit", async (e) => {
 // Start session form validation
 
 const startSessionForm = document.getElementById("start-session-form");
-
+const startSessionBttn = document.getElementById("start-session-bttn");
 startSessionForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -258,6 +286,8 @@ startSessionForm.addEventListener("submit", async (e) => {
     if (allValid) {
         authMsg.classList.add("hidden");
         authMsg.textContent = "";
+        startSessionBttn.disabled = true;
+        startSessionBttn.textContent = "Starting session...";
 
         let sessionType = (faceToFaceRadio.checked) ? "face_to_face" : "online";
         const requestBody = {token, sessionType};
@@ -281,6 +311,8 @@ startSessionForm.addEventListener("submit", async (e) => {
                     if (data.status !== "success") {
                         document.querySelector(".auth-message").classList.remove("hidden");
                         document.querySelector(".auth-message").textContent = data.reason;
+                        startSessionBttn.disabled = false;
+                        startSessionBttn.textContent = "Start session";
                         return;
                     }
 
@@ -289,10 +321,13 @@ startSessionForm.addEventListener("submit", async (e) => {
 
                     document.querySelector(".qr-code").innerHTML = data.qrSvg;
                     document.getElementById("session-code").textContent = data.sessionCode;
+                    currentSessionCode = data.sessionCode;
                 }
                 catch (error) {
                     document.querySelector(".auth-message").classList.remove("hidden");
                     document.querySelector(".auth-message").textContent = "Couldn't reach the server.";
+                    startSessionBttn.disabled = false;
+                    startSessionBttn.textContent = "Start session";
                 }
             }, 
             () => {
@@ -310,8 +345,8 @@ startSessionForm.addEventListener("submit", async (e) => {
 // Live session manual attendance marker form validation
 
 const manualMarkForm = document.getElementById("manual-mark-form");
-
-manualMarkForm.addEventListener("submit", (e) => {
+const markManualBttn = document.getElementById("mark-manual-bttn");
+manualMarkForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const name = manualMarkForm.querySelector("#student-name").value.trim();
@@ -335,6 +370,20 @@ manualMarkForm.addEventListener("submit", (e) => {
         errorMsgs.forEach(error => {
             error.textContent = "";
         });
+        markManualBttn.disabled = true;
+        markManualBttn.textContent = "Marking...";
+
+        try {
+            const res = await fetch(`${API_BASE}/attendance/manual`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({token, sessionCode: currentSessionCode, name, studentID: id})
+            });
+
+        }
+        catch (error) {
+
+        }
             
     }
 });
