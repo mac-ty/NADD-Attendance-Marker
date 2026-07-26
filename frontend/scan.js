@@ -102,6 +102,8 @@ attendanceForm.addEventListener("submit", (e) => {
         markBttn.disabled = true;
         markBttn.textContent = "Marking...";
 
+        markMessage.classList.add("hidden");
+        markMessage.textContent = "";
 
         const requestBody = {sessionCode, name, studentID: id, deviceID};
 
