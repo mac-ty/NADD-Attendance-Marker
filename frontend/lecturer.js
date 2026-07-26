@@ -321,8 +321,9 @@ startSessionForm.addEventListener("submit", async (e) => {
 
                     document.querySelector(".qr-code").innerHTML = data.qrSvg;
                     document.getElementById("session-code").textContent = data.sessionCode;
+                    document.getElementById("session-type").textContent = sessionType === "face_to_face" ? "Face to Face" : "Online";
                     currentSessionCode = data.sessionCode;
-                    return;
+                    startPolling();
                 }
                 catch (error) {
                     document.querySelector(".auth-message").classList.remove("hidden");
@@ -334,8 +335,11 @@ startSessionForm.addEventListener("submit", async (e) => {
             () => {
                     authMsg.classList.remove("hidden");
                     authMsg.textContent = "Unable to get your location. \nEnable location and try again";
-                    return;
-            });
+                    startSessionBttn.disabled = false;
+                    startSessionBttn.textContent = "Start session";
+                }); 
+            
+            return;
         }
 
         try {
@@ -362,7 +366,9 @@ startSessionForm.addEventListener("submit", async (e) => {
 
             document.querySelector(".qr-code").innerHTML = data.qrSvg;
             document.getElementById("session-code").textContent = data.sessionCode;
+            document.getElementById("session-type").textContent = sessionType === "face_to_face" ? "Face to Face" : "Online";
             currentSessionCode = data.sessionCode;
+            startPolling();
         }
         catch (error) {
             document.querySelector(".auth-message").classList.remove("hidden");
@@ -412,13 +418,67 @@ manualMarkForm.addEventListener("submit", async (e) => {
                 body: JSON.stringify({token, sessionCode: currentSessionCode, name, studentID: id})
             });
 
+            const data = await res.json();
+            
+            markManualBttn.disabled = false;
+            markManualBttn.textContent = "Mark";
+
+            if (data.status === "success") {
+                document.querySelector(".mark-result").textContent = `${name}'s attendance has been marked`;
+                manualMarkForm.reset();
+            }
+            else {
+                document.querySelector(".mark-result").textContent = data.reason;
+            }
+
         }
         catch (error) {
-
+            markManualBttn.disabled = false;
+            markManualBttn.textContent = "Mark";
+            document.querySelector(".mark-result").textContent = "Couldn't reach the server.";
         }
             
     }
 });
+
+
+let pollInterval = null;
+
+function formatTime(totalSeconds) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+}
+
+
+function startPolling() {
+    if (pollInterval) clearInterval(pollInterval);
+
+    const timeRemainingEl = document.getElementById("time-remaining");
+    const markedCountEl = document.getElementById("marked-count");
+
+    pollInterval = setInterval(async () => {
+        try {
+            const res = await fetch(`${API_BASE}/session/${currentSessionCode}/status`);
+            const data = await res.json();
+
+            if (!res.ok) {
+                clearInterval(pollInterval);
+                return;
+            }
+
+            timeRemainingEl.textContent = formatTime(data.secondsRemaining);
+            markedCountEl.textContent = data.markedCount;
+
+            if (data.closed) {
+                clearInterval(pollInterval);
+                document.querySelector(".live-session").classList.add("hidden");
+                document.querySelector(".closed-session").classList.remove("hidden");
+            }
+        }
+        catch (error) {}
+    }, 3000);
+}
 
 
 document.querySelector(".start-session-bttn").addEventListener("click", () => {
