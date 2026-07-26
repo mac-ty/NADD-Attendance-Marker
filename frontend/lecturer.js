@@ -437,7 +437,6 @@ manualMarkForm.addEventListener("submit", async (e) => {
             markManualBttn.textContent = "Mark";
             document.querySelector(".mark-result").textContent = "Couldn't reach the server.";
         }
-            
     }
 });
 
@@ -472,8 +471,10 @@ function startPolling() {
 
             if (data.closed) {
                 clearInterval(pollInterval);
+                document.getElementById("final-marked-count").textContent = data.markedCount;
                 document.querySelector(".live-session").classList.add("hidden");
                 document.querySelector(".closed-session").classList.remove("hidden");
+
             }
         }
         catch (error) {}
