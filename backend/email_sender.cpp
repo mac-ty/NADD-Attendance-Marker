@@ -1,9 +1,11 @@
 #include <curl/curl.h>
 #include "email_sender.h"
+#include <cstring>
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
 #include <iostream>
+#include <ctime>
 using namespace std;
 
 static const string sessionsDirectory = "./database/sessions/";
@@ -16,13 +18,13 @@ static string buildHtmlTable(const string& csvFilename) {
 
     ostringstream html;
     html << "<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\">";
-    html << "<tr><th>NAME</th><th>STUDENT ID</th><th>DEVICE ID</th><th>TIME MARKED</th><th>MANUAL</th></tr>";
+    html << "<tr><th>name</th><th>studentID</th><th>deviceID</th><th>timeMarked</th><th>manual</th></tr>";
 
     string line;
     bool isHeaderRow = true;
     while (getline(file, line)) {
         if (line.empty()) continue;
-        if (isHeaderRow) { isHeaderRow = false; continue; } 
+        if (isHeaderRow) { isHeaderRow = false; continue; }
 
         stringstream ss(line);
         string name, studentID, deviceID, timeMarked, manual;
@@ -32,41 +34,56 @@ static string buildHtmlTable(const string& csvFilename) {
         getline(ss, timeMarked, ',');
         getline(ss, manual, ',');
 
-        html << "<tr><td>" << name << "</td><td>" << studentID << "</td><td>" 
+        html << "<tr><td>" << name << "</td><td>" << studentID << "</td><td>"
              << deviceID << "</td><td>" << timeMarked << "</td><td>" << manual << "</td></tr>";
-        }
-        html << "</table>";
-        file.close();
-        return html.str();
+    }
+
+    html << "</table>";
+    file.close();
+    return html.str();
 }
 
-static size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* userdata) {
-    return size * nmemb;
+struct UploadContext {
+    string data;
+    size_t pos = 0;
+};
+
+static size_t readCallback(char* ptr, size_t size, size_t nmemb, void* userp) {
+    UploadContext* ctx = (UploadContext*)userp;
+    size_t bufferSize = size * nmemb;
+    size_t remaining = ctx->data.size() - ctx->pos;
+    size_t toCopy = min(bufferSize, remaining);
+
+    if (toCopy == 0) return 0;
+
+    memcpy(ptr, ctx->data.c_str() + ctx->pos, toCopy);
+    ctx->pos += toCopy;
+    return toCopy;
 }
 
-static void sendViaMailgun(const string& toEmail, const string& subject, const string& htmlBody) {
-    const char* apiKeyEnv = getenv("MAILGUN_API_KEY");
-    const char* domainEnv = getenv("MAILGUN_DOMAIN");
-    const char* fromEnv = getenv("MAILGUN_FROM");
+static void sendViaGmailSmtp(const string& toEmail, const string& subject, const string& htmlBody) {
+    const char* gmailAddressEnv = getenv("GMAIL_ADDRESS");
+    const char* gmailAppPasswordEnv = getenv("GMAIL_APP_PASSWORD");
 
-    cout << "sendViaMailgun called for: " << toEmail << endl;
-
-    if (!apiKeyEnv || !domainEnv || !fromEnv) {
-        cerr << "Missing Mailgun environment variables - email not sent." << endl;
-        cerr << "apiKeyEnv present: " << (apiKeyEnv != nullptr) << endl;
-        cerr << "domainEnv present: " << (domainEnv != nullptr) << endl;
-        cerr << "fromEnv present: " << (fromEnv != nullptr) << endl;
+    if (!gmailAddressEnv || !gmailAppPasswordEnv) {
+        cerr << "Missing Gmail environment variables - email not sent." << endl;
         return;
     }
 
-    string apiKey = apiKeyEnv;
-    string domain = domainEnv;
-    string from = fromEnv;
-    string url = "https://api.mailgun.net/v3/" + domain + "/messages";
+    string gmailAddress = gmailAddressEnv;
+    string gmailAppPassword = gmailAppPasswordEnv;
 
-    cout << "Using domain: " << domain << endl;
-    cout << "Using from: " << from << endl;
-    cout << "Sending to URL: " << url << endl;
+    ostringstream message;
+    message << "To: " << toEmail << "\r\n";
+    message << "From: " << gmailAddress << "\r\n";
+    message << "Subject: " << subject << "\r\n";
+    message << "MIME-Version: 1.0\r\n";
+    message << "Content-Type: text/html; charset=UTF-8\r\n";
+    message << "\r\n";
+    message << htmlBody << "\r\n";
+
+    UploadContext ctx;
+    ctx.data = message.str();
 
     CURL* curl = curl_easy_init();
     if (!curl) {
@@ -74,43 +91,30 @@ static void sendViaMailgun(const string& toEmail, const string& subject, const s
         return;
     }
 
-    curl_mime* mime = curl_mime_init(curl);
-    curl_mimepart* part;
+    struct curl_slist* recipients = nullptr;
+    recipients = curl_slist_append(recipients, toEmail.c_str());
 
-    part = curl_mime_addpart(mime);
-    curl_mime_name(part, "from");
-    curl_mime_data(part, from.c_str(), CURL_ZERO_TERMINATED);
+    string mailFrom = "<" + gmailAddress + ">";
 
-    part = curl_mime_addpart(mime);
-    curl_mime_name(part, "to");
-    curl_mime_data(part, toEmail.c_str(), CURL_ZERO_TERMINATED);
-
-    part = curl_mime_addpart(mime);
-    curl_mime_name(part, "subject");
-    curl_mime_data(part, subject.c_str(), CURL_ZERO_TERMINATED);
-
-    part = curl_mime_addpart(mime);
-    curl_mime_name(part, "html");
-    curl_mime_data(part, htmlBody.c_str(), CURL_ZERO_TERMINATED);
-
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_USERNAME, "api");
-    curl_easy_setopt(curl, CURLOPT_PASSWORD, apiKey.c_str());
-    curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L); // NEW - dumps full request/response detail
+    curl_easy_setopt(curl, CURLOPT_URL, "smtps://smtp.gmail.com:465");
+    curl_easy_setopt(curl, CURLOPT_USERNAME, gmailAddress.c_str());
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, gmailAppPassword.c_str());
+    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, mailFrom.c_str());
+    curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, readCallback);
+    curl_easy_setopt(curl, CURLOPT_READDATA, &ctx);
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+    curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
 
     CURLcode res = curl_easy_perform(curl);
-
-    long httpCode = 0;
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
-    cout << "Curl result: " << curl_easy_strerror(res) << " | HTTP status: " << httpCode << endl;
-
     if (res != CURLE_OK) {
-        cerr << "Mailgun send failed: " << curl_easy_strerror(res) << endl;
+        cerr << "Gmail SMTP send failed: " << curl_easy_strerror(res) << endl;
+    }
+    else {
+        cout << "Email sent successfully to " << toEmail << endl;
     }
 
-    curl_mime_free(mime);
+    curl_slist_free_all(recipients);
     curl_easy_cleanup(curl);
 }
 
@@ -120,9 +124,10 @@ void sendAttendanceReport(const Session& session) {
     string body = "<h2>Attendance Report</h2><p>Course: " + session.courseCode + "</p>" + tableHtml;
 
     if (!session.repEmail.empty()) {
-        sendViaMailgun(session.repEmail, subject, body);
+        sendViaGmailSmtp(session.repEmail, subject, body);
     }
+
     if (session.sendToLecturer && !session.lecturerEmail.empty()) {
-        sendViaMailgun(session.lecturerEmail, subject, body);
+        sendViaGmailSmtp(session.lecturerEmail, subject, body);
     }
 }
