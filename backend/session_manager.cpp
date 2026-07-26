@@ -162,6 +162,7 @@ void handleSessionStatus(const httplib::Request& req, httplib::Response& res) {
     if (secondsRemaining == 0) session -> closed = true;
 
     if (session->closed && !session->emailSent) {
+        cout << "Attempting to send attendance report for session " << session->sessionCode << endl;
         sendAttendanceReport(*session);
         session->emailSent = true;
     }

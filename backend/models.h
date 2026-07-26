@@ -30,7 +30,7 @@ struct Session {
     string sessionType;
     double centerLat = 0, centerLng = 0;
     time_t startTime;
-    int durationSeconds = 600;
+    int durationSeconds = 30;
     bool closed = false;
     bool emailSent = false;
     string lecturerEmail;

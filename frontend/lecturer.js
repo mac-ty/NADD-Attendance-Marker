@@ -275,6 +275,7 @@ startSessionForm.addEventListener("submit", async (e) => {
 
     const faceToFaceRadio = startSessionForm.querySelector("#face-to-face-session");
     const onlineRadio = startSessionForm.querySelector("#online-session");
+    const mailLecturer = startSessionForm.querySelector("#email-lecturer");
     const authMsg = document.querySelector(".auth-message");
     let allValid = true;
     if (!faceToFaceRadio.checked && !onlineRadio.checked) {
@@ -290,7 +291,7 @@ startSessionForm.addEventListener("submit", async (e) => {
         startSessionBttn.textContent = "Starting session...";
 
         let sessionType = (faceToFaceRadio.checked) ? "face_to_face" : "online";
-        const requestBody = {token, sessionType};
+        const requestBody = {token, sessionType, sendToLecturer: mailLecturer.checked};
 
         if (sessionType === "face_to_face") {
             navigator.geolocation.getCurrentPosition(async (position) => {
