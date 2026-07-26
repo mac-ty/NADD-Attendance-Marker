@@ -8,6 +8,8 @@
 #include <sstream>
 #include <random>
 #include <ctime>
+#include <fstream>
+#include <sstream>
 using namespace std;
 using json = nlohmann::json;
 using qrcodegen::QrCode;
@@ -26,6 +28,16 @@ static string generateSessionCode() {
     return sessionCode;
 }
 
+static string formatFilename(const string& input) {
+    string result = input;
+    for (char& c : result) {
+        if (c == ' ' || c == '/' || c == '\\' || c == ':') {
+            c = '_';
+        }
+    }
+
+    return result;
+}
 
 static string toSvgString(const QrCode& qr, int border) {
     ostringstream sb;
@@ -92,6 +104,12 @@ void handleStartSession(const httplib::Request& req, httplib::Response& res) {
     newSession.sessionType = sessionType;
     newSession.courseCode = courseCode;
     newSession.startTime = time(nullptr);
+
+    time_t now = time(nullptr);
+    char dateBuffer[11];
+    strftime(dateBuffer, sizeof(dateBuffer), "%Y-%m-%d", localtime(&now));
+    newSession.csvFilename = formatFilename(courseCode) + "_" + string(dateBuffer) + ".csv";
+    createSessionFile(newSession);
 
     if (sessionType == "face_to_face") {
         newSession.centerLat = body["lat"];
@@ -173,4 +191,29 @@ void handleCloseSession(const httplib::Request& req, httplib::Response& res) {
             {"markedCount", (int)session -> marked.size()}
         }).dump(),
         "application/json");
+}
+
+
+void handleDebugSessionFile(const httplib::Request& req, httplib::Response& res) {
+    string sessionCode = req.matches[1];
+    Session* session = findSession(sessionCode);
+
+    if (session == nullptr) {
+        res.status = 404;
+        res.set_content("session not found", "text/plain");
+        return;
+    }
+
+    ifstream file("./database/sessions/" + session->csvFilename);
+    if (!file.is_open()) {
+        res.status = 404;
+        res.set_content("csv file not found on disk", "text/plain");
+        return;
+    }
+
+    stringstream buffer;
+    buffer << file.rdbuf();
+    file.close();
+
+    res.set_content(buffer.str(), "text/plain");
 }

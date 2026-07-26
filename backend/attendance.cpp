@@ -2,6 +2,7 @@
 #include "auth.h"
 #include "session_manager.h"
 #include "location.h"
+#include "storage.h"
 #include "json.hpp"
 #include <ctime>
 
@@ -99,6 +100,8 @@ void handleMarkAttendance(const httplib::Request& req, httplib::Response& res) {
     session -> markedIDs.insert(studentID);
     session -> markedDevices.insert(deviceID);
 
+    appendAttendanceRecord(*session, record);
+
     res.set_content(
         json({
             {"status", "success"}
@@ -171,6 +174,8 @@ void handleManualMark(const httplib::Request& req, httplib::Response& res) {
 
     session->marked.push_back(record);
     session->markedIDs.insert(studentID);
+
+    appendAttendanceRecord(*session, record);
 
     res.set_content(
         json({

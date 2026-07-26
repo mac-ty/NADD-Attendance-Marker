@@ -27,7 +27,8 @@ int main() {
     svr.Post(R"(/api/session/(\w+)/close)", handleCloseSession);
     svr.Post("/api/attendance/mark", handleMarkAttendance);
     svr.Post("/api/attendance/manual", handleManualMark);
-    // svr.Get("/api/debug/lecturers", handleDebugLecturers);
+    svr.Get("/api/debug/lecturers", handleDebugLecturers);
+    svr.Get(R"(/api/debug/session/(\w+))", handleDebugSessionFile);
 
     const char* portEnv = getenv("PORT");
     int port = portEnv ? atoi(portEnv) : 8080;

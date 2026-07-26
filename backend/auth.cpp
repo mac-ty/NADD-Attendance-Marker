@@ -3,6 +3,7 @@
 #include "models.h"
 #include "json.hpp"
 #include "picosha2.h"
+#include "storage.h"
 #include <map>
 #include <random>
 using namespace std;
@@ -136,17 +137,25 @@ bool isTokenValid(const string& token, string& outEmail) {
     return true;
 }
 
-
 void handleDebugLecturers(const httplib::Request& req, httplib::Response& res) {
     vector<Lecturer> lecturers = loadLecturers();
-    json arr = json::array();
-    for (const Lecturer& lec : lecturers) {
-        arr.push_back({
-            {"id", lec.id},
-            {"name", lec.name},
-            {"email", lec.email},
-            {"repEmail", lec.repEmail}
+    json lecturerList = json::array();
+
+    for (const Lecturer& lecturer : lecturers) {
+        lecturerList.push_back({
+            {"id", lecturer.id},
+            {"name", lecturer.name},
+            {"email", lecturer.email},
+            {"repEmail", lecturer.repEmail},
+            {"courseCode", lecturer.courseCode}
         });
     }
-    res.set_content(arr.dump(), "application/json");
+
+    res.set_content(
+        json({
+            {"status", "success"},
+            {"lecturers", lecturerList}
+        }).dump(),
+        "application/json"
+    );
 }
