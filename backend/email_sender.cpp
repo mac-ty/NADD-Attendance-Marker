@@ -18,7 +18,7 @@ static string buildHtmlTable(const string& csvFilename) {
 
     ostringstream html;
     html << "<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\">";
-    html << "<tr><th>name</th><th>studentID</th><th>deviceID</th><th>timeMarked</th><th>manual</th></tr>";
+    html << "<tr><th>name</th><th>studentID</th></tr>";
 
     string line;
     bool isHeaderRow = true;
@@ -34,8 +34,7 @@ static string buildHtmlTable(const string& csvFilename) {
         getline(ss, timeMarked, ',');
         getline(ss, manual, ',');
 
-        html << "<tr><td>" << name << "</td><td>" << studentID << "</td><td>"
-             << deviceID << "</td><td>" << timeMarked << "</td><td>" << manual << "</td></tr>";
+        html << "<tr><td>" << name << "</td><td>" << studentID << "</td></tr>";
     }
 
     html << "</table>";
@@ -44,8 +43,6 @@ static string buildHtmlTable(const string& csvFilename) {
 }
 
 static size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* userdata) {
-    // Brevo's response body isn't needed, but libcurl requires a write function
-    // to avoid printing raw response bytes to the console.
     return size * nmemb;
 }
 
