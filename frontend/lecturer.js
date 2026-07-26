@@ -368,6 +368,8 @@ startSessionForm.addEventListener("submit", async (e) => {
             document.getElementById("session-code").textContent = data.sessionCode;
             document.getElementById("session-type").textContent = sessionType === "face_to_face" ? "Face to Face" : "Online";
             currentSessionCode = data.sessionCode;
+            startSessionBttn.disabled = false;
+            startSessionBttn.textContent = "Start session";
             startPolling();
         }
         catch (error) {
