@@ -17,7 +17,7 @@ static string buildHtmlTable(const string& csvFilename) {
     }
 
     ostringstream html;
-    html << "<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\">";
+    html << "<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\" style=\"width:100%; max-width:600px;\">";
     html << "<tr><th>name</th><th>studentID</th></tr>";
 
     string line;

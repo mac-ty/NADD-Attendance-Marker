@@ -172,6 +172,10 @@ signUpForm.addEventListener("submit", async (e) => {
                 loginForm.classList.remove("hidden");
                 authMsg.textContent = "";
                 authMsg.classList.add("hidden");
+                signUpBttns.forEach(bttn => {
+                    bttn.disabled = false;
+                    bttn.textContent = "Sign up";
+                });
             }
             else {
                 authMsg.classList.remove("hidden");
@@ -243,6 +247,10 @@ loginForm.addEventListener("submit", async (e) => {
                 document.getElementById("start-session-form").classList.remove("hidden");
                 authMsg.textContent = "";
                 authMsg.classList.add("hidden");
+                loginBttns.forEach(bttn => {
+                    bttn.disabled = true;
+                    bttn.textContent = "Logging in...";
+                });
             }
             else {
                 const authMsg = document.querySelector(".auth-message");
@@ -475,6 +483,14 @@ function startPolling() {
             if (data.closed) {
                 clearInterval(pollInterval);
                 document.getElementById("final-marked-count").textContent = data.markedCount;
+                
+                let mailedTo = data.repEmail;
+                if (data.sendToLecturer && data.lecturerEmail) {
+                    mailedTo += " and " + data.lecturerEmail;
+                }   
+
+                document.getElementById("mailed-emails").textContent = mailedTo
+                
                 document.querySelector(".live-session").classList.add("hidden");
                 document.querySelector(".closed-session").classList.remove("hidden");
 

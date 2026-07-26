@@ -168,14 +168,17 @@ void handleSessionStatus(const httplib::Request& req, httplib::Response& res) {
     }
 
     res.set_content(
-        json({
-            {"secondsRemaining", secondsRemaining},
-            {"markedCount", (int)session -> marked.size()},
-            {"closed", session -> closed},
-            {"sessionType", session -> sessionType}
-        }).dump(),
-        "application/json"
-    );
+    json({
+        {"secondsRemaining", secondsRemaining},
+        {"markedCount", (int)session->marked.size()},
+        {"closed", session->closed},
+        {"sessionType", session->sessionType},
+        {"repEmail", session->repEmail},
+        {"sendToLecturer", session->sendToLecturer},
+        {"lecturerEmail", session->sendToLecturer ? session->lecturerEmail : ""}
+    }).dump(),
+    "application/json"
+);
 }
 
 
