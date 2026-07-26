@@ -424,7 +424,7 @@ manualMarkForm.addEventListener("submit", async (e) => {
             markManualBttn.textContent = "Mark";
 
             if (data.status === "success") {
-                document.querySelector(".mark-result").textContent = `${name}'s attendance has been marked`;
+                document.querySelector(".mark-result").textContent = `${name} marked`;
                 manualMarkForm.reset();
             }
             else {
