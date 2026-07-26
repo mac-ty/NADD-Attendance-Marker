@@ -49,8 +49,13 @@ static void sendViaMailgun(const string& toEmail, const string& subject, const s
     const char* domainEnv = getenv("MAILGUN_DOMAIN");
     const char* fromEnv = getenv("MAILGUN_FROM");
 
+    cout << "sendViaMailgun called for: " << toEmail << endl;
+
     if (!apiKeyEnv || !domainEnv || !fromEnv) {
         cerr << "Missing Mailgun environment variables - email not sent." << endl;
+        cerr << "apiKeyEnv present: " << (apiKeyEnv != nullptr) << endl;
+        cerr << "domainEnv present: " << (domainEnv != nullptr) << endl;
+        cerr << "fromEnv present: " << (fromEnv != nullptr) << endl;
         return;
     }
 
@@ -58,7 +63,11 @@ static void sendViaMailgun(const string& toEmail, const string& subject, const s
     string domain = domainEnv;
     string from = fromEnv;
     string url = "https://api.mailgun.net/v3/" + domain + "/messages";
-    
+
+    cout << "Using domain: " << domain << endl;
+    cout << "Using from: " << from << endl;
+    cout << "Sending to URL: " << url << endl;
+
     CURL* curl = curl_easy_init();
     if (!curl) {
         cerr << "Failed to initialize curl." << endl;
@@ -66,7 +75,6 @@ static void sendViaMailgun(const string& toEmail, const string& subject, const s
     }
 
     curl_mime* mime = curl_mime_init(curl);
-
     curl_mimepart* part;
 
     part = curl_mime_addpart(mime);
@@ -90,8 +98,14 @@ static void sendViaMailgun(const string& toEmail, const string& subject, const s
     curl_easy_setopt(curl, CURLOPT_PASSWORD, apiKey.c_str());
     curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L); // NEW - dumps full request/response detail
 
     CURLcode res = curl_easy_perform(curl);
+
+    long httpCode = 0;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
+    cout << "Curl result: " << curl_easy_strerror(res) << " | HTTP status: " << httpCode << endl;
+
     if (res != CURLE_OK) {
         cerr << "Mailgun send failed: " << curl_easy_strerror(res) << endl;
     }
