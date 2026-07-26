@@ -3,6 +3,7 @@
 #include "storage.h"
 #include "json.hpp"
 #include "qrcodegen.hpp"
+#include "email_sender.h"
 #include <map>
 #include <iostream>
 #include <sstream>
@@ -160,6 +161,11 @@ void handleSessionStatus(const httplib::Request& req, httplib::Response& res) {
     if (secondsRemaining < 0) secondsRemaining = 0;
     if (secondsRemaining == 0) session -> closed = true;
 
+    if (session->closed && !session->emailSent) {
+        sendAttendanceReport(*session);
+        session->emailSent = true;
+    }
+
     res.set_content(
         json({
             {"secondsRemaining", secondsRemaining},
@@ -189,6 +195,11 @@ void handleCloseSession(const httplib::Request& req, httplib::Response& res) {
     }
 
     session -> closed = true;
+
+    if (!session->emailSent) {
+        sendAttendanceReport(*session);
+        session->emailSent = true;
+    }
 
     res.set_content(
         json({
