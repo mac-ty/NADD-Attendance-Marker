@@ -90,10 +90,12 @@ void handleStartSession(const httplib::Request& req, httplib::Response& res) {
     vector<Lecturer> lecturers = loadLecturers();
     int lecturerID = -1;
     string courseCode;
+    string repEmail;
     for (const Lecturer& lecturer : lecturers) {
         if (lecturer.email == lecturerEmail) {
             lecturerID = lecturer.id;
             courseCode = lecturer.courseCode;
+            repEmail = lecturer.repEmail;
             break;
         }
     }
@@ -104,6 +106,9 @@ void handleStartSession(const httplib::Request& req, httplib::Response& res) {
     newSession.sessionType = sessionType;
     newSession.courseCode = courseCode;
     newSession.startTime = time(nullptr);
+    newSession.lecturerEmail = lecturerEmail;
+    newSession.repEmail = repEmail;
+    newSession.sendToLecturer = body.value("sendToLecturer", false);
 
     time_t now = time(nullptr);
     char dateBuffer[11];

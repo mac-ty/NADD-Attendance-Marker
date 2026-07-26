@@ -32,6 +32,10 @@ struct Session {
     time_t startTime;
     int durationSeconds = 600;
     bool closed = false;
+    bool emailSent = false;
+    string lecturerEmail;
+    string repEmail;
+    bool sendToLecturer = false;
 
     vector<AttendanceRecord> marked;
     set<string> markedIDs;
