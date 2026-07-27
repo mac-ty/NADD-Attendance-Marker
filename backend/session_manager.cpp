@@ -1,3 +1,5 @@
+// Written by: Theodore Macaulay Esene 2526403511 and Isaac Adu Sarpong 2526402885
+
 #include "session_manager.h"
 #include "auth.h"
 #include "storage.h"

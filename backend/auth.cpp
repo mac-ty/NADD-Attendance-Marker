@@ -1,3 +1,5 @@
+// Written by: Theodore Macaulay Esene 2526403511
+
 #include "auth.h"
 #include "storage.h"
 #include "models.h"

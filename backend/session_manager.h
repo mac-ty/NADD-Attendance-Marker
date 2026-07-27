@@ -1,3 +1,5 @@
+// Written by: Theodore Macaulay Esene 2526403511
+
 #pragma once
 #include <string>
 #include "httplib.h"

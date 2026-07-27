@@ -1,3 +1,5 @@
+// Written by: Theodore Macaulay Esene 2526403511
+
 #pragma once
 #include <string>
 #include <vector>
@@ -30,7 +32,7 @@ struct Session {
     string sessionType;
     double centerLat = 0, centerLng = 0;
     time_t startTime;
-    int durationSeconds = 30;
+    int durationSeconds = 120;
     bool closed = false;
     bool emailSent = false;
     string lecturerEmail;

@@ -1,3 +1,5 @@
+// Written by: Sean Dzreke - 2526401716
+
 #include <curl/curl.h>
 #include "email_sender.h"
 #include "json.hpp"

@@ -1,3 +1,4 @@
+// Written by: Theodore Macaulay Esene 2526403511
 #include "attendance.h"
 #include "auth.h"
 #include "session_manager.h"
